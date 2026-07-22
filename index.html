@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Governance Diagnostic | AI Horizons Global Consultants</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:Georgia,serif;background:#0d1b2a;color:#fff;line-height:1.6}
+  header{background:#1B2A4A;border-bottom:3px solid #C9A84C;padding:18px 32px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+  .logo{font-size:1.05rem;color:#C9A84C;letter-spacing:1px}
+  .logo span{display:block;font-size:.7rem;color:#8fa3c4;letter-spacing:2px;font-family:Arial,sans-serif}
+  .site{font-family:Arial,sans-serif;font-size:.78rem;color:#8fa3c4}
+
+  .hero{background:#1B2A4A;padding:48px 20px 40px;text-align:center;border-bottom:1px solid #2a3f6f}
+  .hero h1{font-size:2.1rem;margin-bottom:12px;line-height:1.3}
+  .hero h1 em{color:#C9A84C;font-style:normal}
+  .hero .sub{font-family:Arial,sans-serif;font-size:1rem;color:#c3cede;max-width:640px;margin:0 auto 26px}
+  .meter{max-width:520px;margin:0 auto}
+  .meter-top{display:flex;justify-content:space-between;font-family:Arial,sans-serif;font-size:.82rem;color:#8fa3c4;margin-bottom:7px}
+  .meter-top strong{color:#C9A84C;font-size:1.05rem}
+  .track{height:12px;background:#2a3f6f;border-radius:8px;overflow:hidden}
+  .fill{height:100%;width:0%;background:#C9A84C;transition:width .45s ease}
+
+  .container{max-width:840px;margin:0 auto;padding:36px 20px 80px}
+
+  .step{background:#1B2A4A;border:1px solid #2a3f6f;border-left:5px solid #C9A84C;border-radius:10px;padding:26px 28px;margin-bottom:24px}
+  .step h2{font-size:1.15rem;color:#C9A84C;margin-bottom:4px}
+  .step .desc{font-family:Arial,sans-serif;font-size:.87rem;color:#8fa3c4;margin-bottom:20px}
+
+  .ctx-row{margin-bottom:20px}
+  .ctx-row label{display:block;font-family:Arial,sans-serif;font-size:.92rem;color:#dde5f0;margin-bottom:9px}
+  select,input[type=text]{width:100%;padding:11px 13px;background:#0d1b2a;border:1px solid #2a3f6f;border-radius:6px;color:#fff;font-family:Arial,sans-serif;font-size:.92rem}
+  select:focus,input:focus{outline:none;border-color:#C9A84C}
+
+  .q{margin-bottom:22px;padding-bottom:20px;border-bottom:1px solid #22345c}
+  .q:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+  .q .qtext{font-family:Arial,sans-serif;font-size:.95rem;color:#dde5f0;margin-bottom:5px}
+  .q .why{font-family:Arial,sans-serif;font-size:.79rem;color:#7d90b0;font-style:italic;margin-bottom:11px}
+  .opts{display:flex;gap:9px;flex-wrap:wrap}
+  .opts button{padding:9px 18px;border:2px solid #2a3f6f;background:transparent;color:#8fa3c4;border-radius:6px;cursor:pointer;font-family:Arial,sans-serif;font-size:.85rem;transition:.15s}
+  .opts button:hover{border-color:#C9A84C;color:#C9A84C}
+  .opts button.sel-2{background:#12331f;border-color:#3ea76b;color:#5fd18f}
+  .opts button.sel-1{background:#3d3208;border-color:#C9A84C;color:#e0c369}
+  .opts button.sel-0{background:#3d1414;border-color:#c0392b;color:#e77f72}
+
+  .flag{display:inline-block;font-family:Arial,sans-serif;font-size:.68rem;letter-spacing:1px;color:#e77f72;border:1px solid #6b2222;background:#2a1010;padding:2px 7px;border-radius:3px;margin-left:8px;vertical-align:middle}
+
+  .submit{text-align:center;margin-top:34px}
+  .submit button{background:#C9A84C;color:#1B2A4A;border:none;padding:16px 46px;font-size:1.05rem;font-weight:bold;border-radius:8px;cursor:pointer;font-family:Arial,sans-serif}
+  .submit button:hover{background:#e0c369}
+  .submit .note{font-family:Arial,sans-serif;font-size:.8rem;color:#7d90b0;margin-top:11px}
+
+  #results{display:none}
+  .rhero{background:#1B2A4A;border:2px solid #C9A84C;border-radius:12px;padding:34px;text-align:center;margin-bottom:26px}
+  .rhero .band{font-family:Arial,sans-serif;font-size:.72rem;letter-spacing:2px;color:#8fa3c4;margin-bottom:8px}
+  .rhero .big{font-size:3.6rem;font-weight:bold;margin:4px 0}
+  .rhero .lvl{font-family:Arial,sans-serif;font-size:1.1rem;margin-bottom:14px}
+  .rhero p{font-family:Arial,sans-serif;font-size:.94rem;color:#c3cede;max-width:580px;margin:0 auto}
+
+  .alert{background:#2a1010;border:1px solid #6b2222;border-left:5px solid #c0392b;border-radius:8px;padding:22px 24px;margin-bottom:22px}
+  .alert h3{color:#e77f72;font-size:1.05rem;margin-bottom:12px}
+  .alert ul{list-style:none;font-family:Arial,sans-serif;font-size:.9rem;color:#eecfcb}
+  .alert li{padding:7px 0 7px 20px;position:relative}
+  .alert li:before{content:"▸";position:absolute;left:0;color:#c0392b}
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:26px}
+  @media(max-width:640px){.grid{grid-template-columns:1fr}.hero h1{font-size:1.6rem}}
+  .pcard{background:#1B2A4A;border:1px solid #2a3f6f;border-radius:10px;padding:18px 20px}
+  .pcard h4{font-size:.95rem;color:#C9A84C;margin-bottom:5px}
+  .pcard .ps{font-size:1.5rem;font-weight:bold;margin-bottom:6px}
+  .pcard p{font-family:Arial,sans-serif;font-size:.82rem;color:#9fb0c9}
+
+  .plan{background:#1B2A4A;border:1px solid #2a3f6f;border-radius:10px;padding:28px;margin-bottom:26px}
+  .plan h3{color:#C9A84C;font-size:1.2rem;margin-bottom:6px}
+  .plan .plansub{font-family:Arial,sans-serif;font-size:.85rem;color:#8fa3c4;margin-bottom:22px}
+  .phase{margin-bottom:22px}
+  .phase h4{font-family:Arial,sans-serif;font-size:.8rem;letter-spacing:2px;color:#C9A84C;border-bottom:1px solid #2a3f6f;padding-bottom:6px;margin-bottom:11px}
+  .phase ol{font-family:Arial,sans-serif;font-size:.9rem;color:#dde5f0;padding-left:20px}
+  .phase li{padding:5px 0}
+  .phase .empty{font-family:Arial,sans-serif;font-size:.88rem;color:#7d90b0;font-style:italic}
+
+  .cta{background:#C9A84C;border-radius:12px;padding:34px;text-align:center;margin-bottom:20px}
+  .cta h2{color:#1B2A4A;font-size:1.4rem;margin-bottom:10px}
+  .cta p{font-family:Arial,sans-serif;font-size:.95rem;color:#243a5e;max-width:520px;margin:0 auto 22px}
+  .cta a{display:inline-block;background:#1B2A4A;color:#C9A84C;padding:15px 40px;border-radius:8px;font-family:Arial,sans-serif;font-weight:bold;text-decoration:none}
+  .cta a:hover{background:#0d1b2a}
+
+  .actions{text-align:center;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .actions button{background:transparent;border:1px solid #4a5f85;color:#8fa3c4;padding:10px 24px;border-radius:6px;cursor:pointer;font-family:Arial,sans-serif;font-size:.87rem}
+  .actions button:hover{border-color:#C9A84C;color:#C9A84C}
+
+  .disclaimer{font-family:Arial,sans-serif;font-size:.76rem;color:#6b7d9c;text-align:center;margin-top:26px;max-width:620px;margin-left:auto;margin-right:auto;line-height:1.6}
+
+  footer{background:#1B2A4A;border-top:2px solid #C9A84C;text-align:center;padding:22px;font-family:Arial,sans-serif;font-size:.82rem;color:#8fa3c4}
+  footer a{color:#C9A84C;text-decoration:none}
+
+  .g{color:#5fd18f}.y{color:#e0c369}.r{color:#e77f72}
+
+  @media print{
+    body{background:#fff;color:#000}
+    header,.cta,.actions,#assessment,.disclaimer{display:none}
+    .rhero,.pcard,.plan,.alert{border:1px solid #999;background:#fff;color:#000}
+    .rhero h2,.plan h3,.pcard h4,.phase h4{color:#000}
+    .plan .plansub,.pcard p,.rhero p{color:#333}
+    .phase ol{color:#000}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">AI HORIZONS GLOBAL CONSULTANTS<span>AI GOVERNANCE DIAGNOSTIC</span></div>
+  <div class="site">aihorizonsglobal.com</div>
+</header>
+
+<div id="assessment">
+  <div class="hero">
+    <h1>Where Is Your Business <em>Actually Exposed?</em></h1>
+    <p class="sub">Most AI assessments give you a score. This one tells you which specific gaps create real risk in your business — and what to do about them in the next 90 days.</p>
+    <div class="meter">
+      <div class="meter-top"><span>Assessment progress</span><strong id="prog">0 of 16</strong></div>
+      <div class="track"><div class="fill" id="fill"></div></div>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <div class="step">
+      <h2>First — your context</h2>
+      <p class="desc">Risk isn't the same for every business. These three answers change how your results are scored and prioritized.</p>
+
+      <div class="ctx-row">
+        <label>What does your organization do?</label>
+        <select id="ctx-sector" onchange="tick()">
+          <option value="">Select your sector...</option>
+          <option value="regulated">Healthcare, finance, insurance, legal, or education</option>
+          <option value="people">Staffing, HR, recruiting, or people services</option>
+          <option value="gov">Government, public sector, or government contracting</option>
+          <option value="service">Professional or B2B services</option>
+          <option value="consumer">Retail, hospitality, or consumer services</option>
+          <option value="other">Something else</option>
+        </select>
+      </div>
+
+      <div class="ctx-row">
+        <label>How many people work in your organization?</label>
+        <select id="ctx-size" onchange="tick()">
+          <option value="">Select size...</option>
+          <option value="micro">Just me, or under 10</option>
+          <option value="small">10 to 50</option>
+          <option value="mid">50 to 250</option>
+          <option value="large">Over 250</option>
+        </select>
+      </div>
+
+      <div class="ctx-row">
+        <label>Do your AI tools touch anything that leaves your building — customer communications, pricing, hiring decisions, or client deliverables?</label>
+        <select id="ctx-exposure" onchange="tick()">
+          <option value="">Select...</option>
+          <option value="external">Yes — AI output reaches customers or affects decisions about people</option>
+          <option value="internal">No — AI is internal only (drafting, summarizing, research)</option>
+          <option value="unsure">I'm not certain</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="step">
+      <h2>Pillar 1 — Clarity</h2>
+      <p class="desc">You cannot govern what you cannot see. This pillar establishes whether you know what is actually running.</p>
+
+      <div class="q" data-p="0" data-w="2">
+        <div class="qtext">Do you have a written list of every AI tool in use across your organization?</div>
+        <div class="why">Including tools individual staff signed up for without approval.</div>
+        <div class="opts">
+          <button onclick="a(this,2)">Yes — documented and current</button>
+          <button onclick="a(this,1)">Partly — I know some of them</button>
+          <button onclick="a(this,0)">No</button>
+        </div>
+      </div>
+
+      <div class="q" data-p="0" data-w="3" data-critical="inventory">
+        <div class="qtext">Can you name which AI tools influence decisions that affect a customer, an employee, or money?<span class="flag">HIGH RISK</span></div>
+        <div class="why">This is the difference between a convenience tool and a governance obligation.</div>
+        <div class="opts">
+          <button onclick="a(this,2)">Yes — I know exactly which ones</button>
+          <button onclick="a(this,1)">Roughly — I'd have to check</button>
+          <button onclick="a(this,0)">No — I don't know</button>
+        </div>
+      </div>
+
+      <div class="q" data-p="0" data-w="1">
+        <div class="qtext">Do your team members know when they are using AI versus their own judgment on a task?</div>
+        <div class="why">Undisclosed AI use inside a team is how errors become invisible.</div>
+        <div class="opts">
+          <button onclick="a(this,2)">Yes — it's explicit</button>
+          <button onclick="a(this,1)">Somewhat — it varies by person</button>
+          <button onclick="a(this,0)">No</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <h2>Pillar 2 — Accountability</h2>
+      <p class="desc">When AI produces a bad outcome, the first question anyone asks is who was responsible. This pillar determines whether you have an answer.</p>
+
+      <div class="q" data-p="1" data-w="3" data-critical="owner">
+        <div class="qtext">Is there one named person accountable for each AI tool's output?<span class="flag">HIGH RISK</span></div>
+        <div class="why">Not a team. Not a department. A name.</div>
+        <div class="opts">
+          <button onclick="a(this,2)">Yes — every tool has an owner</button>
+          <button onclick="a(this,1)">Some do, some don't</button>
+          <button onclick="a(this,0)">No — nobody specifically</button>
+        </div>
+      </div>
+
+      <div class="q" data-p="1" data-w="2">
+        <div class="qtext">Is there a written AI usage policy your staff have actually read and acknowledged?</div>
+        <div class="why">An unacknowledged policy provides no protection.</div>
+        <div class="opts">
+          <button onclick="a(this,2)">Yes — written and acknowledged</button>
+          <button onclick="a(this,1)">Written, but not formally acknowledged</button>
+          <button onclick="a(this,0)">No policy exists</button>
+        </div>
+      </div>
+
+      <div class="q" data-p="1" data-w="2">
+        <div class="qtext">If an AI tool produced a damaging output tomorrow, does your team know who to tell and what happens next?</div>
+        <div class="why">Incident response written down beats incident response invented under pressure.</div>
+        <div class="opts">
+          <button onclick="a(this,2)">Yes — documented escalation path</button>
+          <button onclick="a(this,1)">Informally — they'd tell someone</button>
+          <button onclick="a(this,0)">No</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <h2>Pillar 3 — Data Integrity</h2>
+      <p class="desc">AI is confident regardless of whether its inputs are correct. This pillar tests whether you have verified what goes in and where it goes.</p>
+
+      <div class="q" data-p="2" data-w="3" data-critical="data">
+        <div class="qtext">Do you know whether your AI tools store, share, or train on the data you put into them?<span class="flag">HIGH RISK</span></div>
+        <div class="why">Client information, employee records, and proprietary work all count.</div>
+        <div class="opts">
+          <button onclick="a(this,2)">Yes — terms reviewed and documented</button>
+          <button onclick="a(this,1)">I've checked one or two</button>
+          <button onclick="a(this,0)">No — never reviewed</button>
+        </div>
+      </div>
+
+      <div class="q" data-p="2" data-w="2">
+        <div class="qtext">Is the data your AI tools rely on verified as current and accurate?</div>
+        <div class="why">Outdated inputs produce confidently wrong outputs at scale.</div>
+        <div class="opts">
+          <button onclick="a(this,2)">Yes — checked on a schedule</button>
+          <button onclick="a(this,1)">Sometimes — no formal process</button>
+          <button onclick="a(this,0)">No — quality is unknown</button>
+        </div>
+      </div>
+
+      <div class="q" data-p="2" data-w="2">
+        <div class="qtext">Do you have rules about what information staff may not put into an AI tool?</div>
+        <div class="why">Most data exposure happens through ordinary staff use, not a breach.</div>
+        <div class="opts">
+          <button onclick="a(this,2)">Yes — clear written rules</button>
+          <button onclick="a(this,1)">Understood informally</button>
+          <button onclick="a(this,0)">No rules</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <h2>Pillar 4 — Risk Awareness</h2>
+      <p class="desc">Every AI tool will be wrong eventually. This pillar tests whether you know where that would hurt most.</p>
+
+      <div class="q" data-p="3" data-w="2">
+        <div class="qtext">Have you identified which AI-influenced decisions would cause the most damage if they were wrong?</div>
+        <div class="why">Not all errors are equal. Governance effort should follow consequence.</div>
+        <div class="opts">
+          <button onclick="a(this,2)">Yes — ranked by consequence</button>
+          <button onclick="a(this,1)">I have a general sense</button>
+          <button onclick="a(this,0)">No</button>
+        </div>
+      </div>
+
+      <div class="q" data-p="3" data-w="3" data-critical="review">
+        <div class="qtext">Is there a human review step before AI output reaches a customer, a regulator, or a hiring decision?<span class="flag">HIGH RISK</span></div>
+        <div class="why">Human oversight on high-stakes output is the single highest-value control.</div>
+        <div class="opts">
+          <button onclick="a(this,2)">Yes — required and consistent</button>
+          <button onclick="a(this,1)">Sometimes — depends who's handling it</button>
+          <button onclick="a(this,0)">No — output goes out directly</button>
+        </div>
+      </div>
+
+      <div class="q" data-p="3" data-w="2">
+        <div class="qtext">Do you have a plan for what you would do and say publicly if an AI failure became visible to your customers?</div>
+        <div class="why">The response window is hours, not weeks.</div>
+        <div class="opts">
+          <button onclick="a(this,2)">Yes — documented plan</button>
+          <button onclick="a(this,1)">We'd figure it out</button>
+          <button onclick="a(this,0)">No plan</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <h2>Pillar 5 — Documentation</h2>
+      <p class="desc">Documentation is what converts good intentions into defensible evidence. This is also the backbone of any management-system standard, including ISO/IEC 42001.</p>
+
+      <div class="q" data-p="4" data-w="2">
+        <div class="qtext">Do you keep records of which AI tools are used, who owns them, and what data they touch?</div>
+        <div class="why">One maintained page beats a perfect policy nobody wrote down.</div>
+        <div class="opts">
+          <button onclick="a(this,2)">Yes — maintained records</button>
+          <button onclick="a(this,1)">Scattered notes and emails</button>
+          <button onclick="a(this,0)">No records</button>
+        </div>
+      </div>
+
+      <div class="q" data-p="4" data-w="3" data-critical="proof">
+        <div class="qtext">If an enterprise client or auditor asked for your AI governance documentation this week, could you produce it?<span class="flag">HIGH RISK</span></div>
+        <div class="why">Increasingly this question appears in procurement and vendor review, not just audits.</div>
+        <div class="opts">
+          <button onclick="a(this,2)">Yes — within a day</button>
+          <button onclick="a(this,1)">I'd have to assemble it</button>
+          <button onclick="a(this,0)">No — I have nothing to send</button>
+        </div>
+      </div>
+
+      <div class="q" data-p="4" data-w="1">
+        <div class="qtext">Do you revisit your AI practices on a set schedule as tools and staff change?</div>
+        <div class="why">A framework written once and never revisited stops being true within months.</div>
+        <div class="opts">
+          <button onclick="a(this,2)">Yes — scheduled review</button>
+          <button onclick="a(this,1)">Occasionally</button>
+          <button onclick="a(this,0)">Never</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="submit">
+      <button onclick="run()">Generate My Diagnostic &amp; 90-Day Plan &rarr;</button>
+      <div class="note">Nothing is stored or transmitted. Your answers stay in your browser.</div>
+    </div>
+  </div>
+</div>
+
+<div id="results">
+  <div class="container">
+    <div class="rhero">
+      <div class="band">AI GOVERNANCE READINESS</div>
+      <div class="big" id="score">0%</div>
+      <div class="lvl" id="lvl"></div>
+      <p id="ldesc"></p>
+    </div>
+
+    <div class="alert" id="alertbox" style="display:none">
+      <h3>Priority exposures identified</h3>
+      <ul id="alertlist"></ul>
+    </div>
+
+    <div class="grid" id="pillars"></div>
+
+    <div class="plan">
+      <h3>Your 90-Day Action Plan</h3>
+      <p class="plansub">Ordered by risk reduction per hour of effort — not by pillar. Start at the top.</p>
+      <div class="phase"><h4>FIRST 30 DAYS</h4><ol id="p30"></ol></div>
+      <div class="phase"><h4>DAYS 31–60</h4><ol id="p60"></ol></div>
+      <div class="phase"><h4>DAYS 61–90</h4><ol id="p90"></ol></div>
+    </div>
+
+    <div class="cta">
+      <h2>Want a second set of eyes on this?</h2>
+      <p>Book a free 30-minute call with Monica Lewis, Founder of AI Horizons Global Consultants. Bring your results. We'll talk through what matters most for your business — no pitch.</p>
+      <a href="https://calendar.app.google/eRxJJoH8SUSGcmeN7" target="_blank" rel="noopener">Book a Discovery Call &rarr;</a>
+    </div>
+
+    <div class="actions">
+      <button onclick="window.print()">Save or print my results</button>
+      <button onclick="reset()">Retake the diagnostic</button>
+    </div>
+
+    <p class="disclaimer">This diagnostic is a self-assessment tool intended to help you identify governance gaps and prioritize action. It is not a certification, audit, or legal opinion, and it does not certify conformity with ISO/IEC 42001 or any other standard. For regulatory obligations specific to your jurisdiction and sector, consult qualified counsel.</p>
+  </div>
+</div>
+
+<footer>&copy; 2026 AI Horizons Global Consultants &nbsp;|&nbsp; <a href="https://aihorizonsglobal.com">aihorizonsglobal.com</a> &nbsp;|&nbsp; Monica Lewis, Founder</footer>
+
+<script>
+const qs=[...document.querySelectorAll('.q')];
+const TOTAL=qs.length+3;
+const ans=new Array(qs.length).fill(null);
+const PN=['Clarity','Accountability','Data Integrity','Risk Awareness','Documentation'];
+
+function a(btn,val){
+  const q=btn.closest('.q'); const i=qs.indexOf(q);
+  ans[i]=val;
+  q.querySelectorAll('button').forEach(b=>b.classList.remove('sel-0','sel-1','sel-2'));
+  btn.classList.add('sel-'+val);
+  tick();
+}
+
+function ctxDone(){
+  return ['ctx-sector','ctx-size','ctx-exposure'].filter(id=>document.getElementById(id).value).length;
+}
+
+function tick(){
+  const done=ans.filter(v=>v!==null).length+ctxDone();
+  document.getElementById('prog').textContent=done+' of '+TOTAL;
+  document.getElementById('fill').style.width=Math.round(done/TOTAL*100)+'%';
+}
+
+function run(){
+  if(ans.some(v=>v===null)||ctxDone()<3){
+    alert('Please complete the context section and all questions to generate your diagnostic.');
+    return;
+  }
+
+  const sector=document.getElementById('ctx-sector').value;
+  const size=document.getElementById('ctx-size').value;
+  const exposure=document.getElementById('ctx-exposure').value;
+
+  const pS=[0,0,0,0,0], pM=[0,0,0,0,0];
+  const crit={};
+  qs.forEach((q,i)=>{
+    const p=+q.dataset.p, w=+q.dataset.w;
+    pS[p]+=ans[i]*w; pM[p]+=2*w;
+    if(q.dataset.critical) crit[q.dataset.critical]=ans[i];
+  });
+
+  let raw=pS.reduce((a,b)=>a+b,0), max=pM.reduce((a,b)=>a+b,0);
+  let pct=Math.round(raw/max*100);
+
+  const highStakes = exposure==='external' || sector==='regulated' || sector==='people' || sector==='gov';
+  if(highStakes && pct>40) pct=Math.max(30,pct-10);
+  if(exposure==='unsure') pct=Math.max(25,pct-5);
+
+  document.getElementById('score').textContent=pct+'%';
+
+  let lvl,desc,cls;
+  if(pct>=78){lvl='Established — formalize and prove it';cls='g';
+    desc='You have working governance habits. The gap now is evidence: turning what you already do into documentation you can hand to a client, an auditor, or a procurement team. That is what standards like ISO/IEC 42001 are structured around.';}
+  else if(pct>=45){lvl='Partial — real gaps, fixable ones';cls='y';
+    desc='You have started, but coverage is uneven. Uneven governance tends to fail exactly where attention was thinnest. The plan below targets the specific gaps that carry the most consequence in your business.';}
+  else{lvl='Early — meaningful exposure right now';cls='r';
+    desc='AI is operating in your business faster than the structure around it. This is common and it is fixable, but the exposure is real today, not hypothetical. The first 30 days below will cut most of it.';}
+
+  if(highStakes && pct<78){
+    desc+=' Because your AI output reaches people outside your organization, the consequence of each gap is higher than the score alone suggests.';
+  }
+
+  document.getElementById('lvl').textContent=lvl;
+  document.getElementById('lvl').className='lvl '+cls;
+  document.getElementById('ldesc').textContent=desc;
+
+  const alerts=[];
+  if(crit.owner===0) alerts.push('No named owner for any AI tool. When something goes wrong, there is no one whose job it was to catch it — and no one who can be shown to have been responsible.');
+  if(crit.review===0 && exposure==='external') alerts.push('AI output is reaching people outside your organization with no human review step. This is your single highest-consequence gap.');
+  if(crit.review===0 && exposure!=='external') alerts.push('No human review step on AI output. Add one before any tool starts producing anything customer-facing.');
+  if(crit.data===0) alerts.push('You do not know where your data goes when staff use AI tools. Client and employee information may be leaving your control through ordinary daily use.');
+  if(crit.proof===0) alerts.push('You could not produce governance documentation on request. This increasingly costs deals in procurement and vendor review, before any regulator is involved.');
+  if(crit.inventory===0) alerts.push('You cannot name which AI tools affect customers, staff, or money. Every other control depends on knowing this first.');
+  if(sector==='people' && crit.review!==2) alerts.push('You operate in hiring or people services, where AI-influenced decisions about individuals carry elevated legal and reputational exposure. Human review here is not optional.');
+  if(sector==='regulated' && crit.proof!==2) alerts.push('You operate in a regulated sector. Documentation expectations in your industry are typically higher than the general baseline this tool assumes.');
+
+  if(alerts.length){
+    document.getElementById('alertbox').style.display='block';
+    document.getElementById('alertlist').innerHTML=alerts.map(t=>'<li>'+t+'</li>').join('');
+  }
+
+  const notes=[
+    ['Strong visibility into what is running.','You can see part of the picture. The unmapped tools are where surprises live.','You are governing blind. Nothing else can be fixed until this is.'],
+    ['Ownership is clear and assignable.','Ownership exists in patches. Gaps become nobody\u2019s job.','No accountability structure. This is the fastest thing on this list to fix.'],
+    ['Data handling is understood and controlled.','Partial visibility on data. The unchecked tools are the risk.','Data is moving through tools you have not vetted.'],
+    ['Risk is identified and controlled where it matters.','Risk is understood informally. Informal controls fail under pressure.','High-stakes AI output is going out unreviewed.'],
+    ['Documentation would hold up under scrutiny.','Some evidence exists but it is not assembled.','Nothing documented. You cannot prove what you actually do well.']
+  ];
+
+  document.getElementById('pillars').innerHTML=PN.map((n,i)=>{
+    const p=Math.round(pS[i]/pM[i]*100);
+    const c=p>=78?'g':p>=45?'y':'r';
+    const note=notes[i][p>=78?0:p>=45?1:2];
+    return '<div class="pcard"><h4>'+n+'</h4><div class="ps '+c+'">'+p+'%</div><p>'+note+'</p></div>';
+  }).join('');
+
+  const t30=[],t60=[],t90=[];
+
+  if(crit.inventory<2||crit.owner<2) t30.push('Build one page listing every AI tool in use, what it does, and who uses it. Send one email asking your team what they use — the answers will surprise you.');
+  if(crit.owner<2) t30.push('Write one name next to each tool on that list. That person reviews its output and raises problems. Tell them.');
+  if(crit.review<2&&exposure==='external') t30.push('Pick the two places AI output reaches customers or affects decisions about people. Require a human to check both before anything goes out. Starting this week.');
+  else if(crit.review<2) t30.push('Identify your two highest-consequence AI uses and add a human check on each.');
+  if(crit.data<2) t30.push('Read the data terms for your three most-used AI tools. Write one paragraph per tool on where your data goes. Keep it with the inventory.');
+  if(t30.length===0) t30.push('Your fundamentals hold. Use this month to gather your existing practices into one location so they can be shown, not just described.');
+
+  if(ans[qs.findIndex(q=>q.dataset.p==='1'&&q.dataset.w==='2')]<2) t60.push('Write a one-page AI usage policy: approved tools, what may never be entered into them, and when human review is required. Have every staff member sign it.');
+  t60.push('Rank your AI uses by what a failure would actually cost — money, a client, a regulator, a reputation. Governance effort follows that ranking.');
+  if(sector==='regulated'||sector==='gov'||sector==='people') t60.push('Identify the specific regulatory and contractual obligations that apply to AI use in your sector and jurisdiction. Confirm them with qualified counsel rather than assuming.');
+  t60.push('Write the escalation path: who is told when AI produces a damaging output, within what timeframe, and who decides what happens next.');
+
+  t90.push('Assemble everything above into a single governance folder you could send to a client or auditor within one business day.');
+  t90.push('Set a recurring quarterly review. Tools change, staff change, and an unreviewed framework quietly stops being accurate.');
+  if(pct>=45) t90.push('Map your documentation against the structure of ISO/IEC 42001 to see where formal alignment would strengthen your position with enterprise and public-sector buyers.');
+  if(sector==='gov'||size==='mid'||size==='large') t90.push('Confirm whether AI governance evidence is appearing in the procurement or vendor questionnaires you are already receiving. If it is, you have a deadline you did not set.');
+
+  document.getElementById('p30').innerHTML=t30.map(t=>'<li>'+t+'</li>').join('');
+  document.getElementById('p60').innerHTML=t60.map(t=>'<li>'+t+'</li>').join('');
+  document.getElementById('p90').innerHTML=t90.map(t=>'<li>'+t+'</li>').join('');
+
+  document.getElementById('assessment').style.display='none';
+  document.getElementById('results').style.display='block';
+  window.scrollTo(0,0);
+}
+
+function reset(){
+  ans.fill(null);
+  document.querySelectorAll('.opts button').forEach(b=>b.classList.remove('sel-0','sel-1','sel-2'));
+  ['ctx-sector','ctx-size','ctx-exposure'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('alertbox').style.display='none';
+  tick();
+  document.getElementById('results').style.display='none';
+  document.getElementById('assessment').style.display='block';
+  window.scrollTo(0,0);
+}
+
+tick();
+</script>
+</body>
+</html>
